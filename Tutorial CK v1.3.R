@@ -5,9 +5,10 @@ x <- c("ggmap", "rgdal", "rgeos", "maptools", "dplyr", "tidyr", "tmap")
 # install.packages(x) # warning: uncommenting this may take a number of minutes
 lapply(x, library, character.only = TRUE) # load the required packages
 
+rm(x)
+
 
 library(OpenStreetMap)
-
 library(leaflet)
 
 
@@ -41,6 +42,7 @@ plot(lnd[sel,])
 plot(lnd, col = "lightgrey") 
 plot(lnd[ sel, ], col = "turquoise", add = TRUE) 
 
+rm(sel)
 
 
 # setting and transforming CRS --------------------------------------------
@@ -51,40 +53,31 @@ proj4string(lnd) <- CRS("+init=epsg:27700") # assign a new CRS
 
 
 
-EPSG <- make_EPSG() # create data frame of available EPSG codes
-EPSG[grepl("WGS 84$", EPSG$note), ] # search for WGS 84 code 
+# EPSG <- make_EPSG() # create data frame of available EPSG codes
+# EPSG[grepl("WGS 84$", EPSG$note), ] # search for WGS 84 code 
+# 
+# rm(EPSG)
 
 
-# Reproject data into correct CRS ()
-lnd84 <- spTransform(lnd, CRS("+init=epsg:4326")) # reproject
-
-coordinates(gCentroid(lnd84))
-
-
-
-# Save lnd84 object (we will use it in Part IV)
-saveRDS(object = lnd84, file = "data/lnd84.Rds")
-
-rm(lnd84)
+# # Reproject data into correct CRS ()
+# lnd84 <- spTransform(lnd, CRS("+init=epsg:4326")) # reproject
+# 
+# coordinates(gCentroid(lnd84))
+# 
+# # Save lnd84 object (we will use it in Part IV)
+# saveRDS(object = lnd84, file = "data/lnd84.Rds")
+# 
+# rm(lnd84)
 
 
 
-rm(list=ls())
+
 
 
 
 
 
 # Attribute joins ---------------------------------------------------------
-
-
-
-
-# Create new object called "lnd" from "london_sport" shapefile
-lnd <- readOGR("data/london_sport.shp")
-plot(lnd) # plot the lnd object (not shown)
-nrow(lnd) # return the number of rows (not shown)
-
 
 
 # Create and look at new crime_data object
