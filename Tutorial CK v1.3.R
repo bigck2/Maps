@@ -7,6 +7,7 @@ lapply(x, library, character.only = TRUE) # load the required packages
 
 rm(x)
 
+library(tidyverse)
 
 library(OpenStreetMap)
 library(leaflet)
@@ -79,53 +80,31 @@ proj4string(lnd) <- CRS("+init=epsg:27700") # assign a new CRS
 
 # Attribute joins ---------------------------------------------------------
 
-
 # Create and look at new crime_data object
-crime_data <- read.csv("data/mps-recordedcrime-borough.csv",
-                       stringsAsFactors = FALSE)
-
-head(crime_data$CrimeType) # information about crime type
+crime_data <- read_csv("data/mps-recordedcrime-borough.csv") 
 
 # Extract "Theft & Handling" crimes and save
-crime_theft <- crime_data[crime_data$CrimeType == "Theft & Handling", ]
-head(crime_theft, 2) # take a look at the result (replace 2 with 10 to see more rows)
+crime_theft <- crime_data %>%
+               filter(CrimeType == "Theft & Handling")
 
+# Calculate the sum of the crime count for each district
+crime_ag <- crime_theft %>%
+            group_by(Borough) %>%
+            summarize(CrimeCount = sum(CrimeCount))
 
-
-# Calculate the sum of the crime count for each district, save result
-crime_ag <- aggregate(CrimeCount ~ Borough, FUN = sum, data = crime_theft)
-# Show the first two rows of the aggregated crime data
-head(crime_ag, 2)
-
-
-# Compare the name column in lnd to Borough column in crime_ag to see which rows match.
-lnd$name %in% crime_ag$Borough
-
-
-# Return rows which do not match
-lnd$name[!lnd$name %in% crime_ag$Borough]
-
-crime_ag$Borough[!crime_ag$Borough %in% lnd$name]
+rm(crime_data, crime_theft)
 
 
 
 
-
-# Find common columns
-head(lnd$name) # dataset to add to (results not shown)
-head(crime_ag$Borough) # the variables to join
-
-
-# head(left_join(lnd@data, crime_ag)) # test it works
-lnd@data <- left_join(lnd@data, crime_ag, by = c('name' = 'Borough'))
+# Now we left join the crime_ag data to the lnd@data
+lnd@data <- left_join(lnd@data, crime_ag, 
+                      by = c('name' = 'Borough'))
 
 
+# Basic plot with new data
+qtm(shp = lnd, fill = "CrimeCount") # plot the basic map
 
-head(lnd@data)
-
-
-
-qtm(lnd, "CrimeCount") # plot the basic map
 
 
 
