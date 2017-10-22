@@ -21,7 +21,6 @@ lnd <- readOGR(dsn = "data/london_sport.shp")
 # Look at classes of the data slot
 sapply(lnd@data, class)
 
-
 # Change the class of Pop_2001 from dactor to numeric
 lnd$Pop_2001 <- as.numeric(lnd$Pop_2001)
 
@@ -53,7 +52,6 @@ proj4string(lnd) <- NA_character_ # remove CRS information from lnd
 proj4string(lnd) <- CRS("+init=epsg:27700") # assign a new CRS
 
 
-
 # EPSG <- make_EPSG() # create data frame of available EPSG codes
 # EPSG[grepl("WGS 84$", EPSG$note), ] # search for WGS 84 code 
 # 
@@ -69,12 +67,6 @@ proj4string(lnd) <- CRS("+init=epsg:27700") # assign a new CRS
 # saveRDS(object = lnd84, file = "data/lnd84.Rds")
 # 
 # rm(lnd84)
-
-
-
-
-
-
 
 
 
@@ -94,27 +86,18 @@ crime_ag <- crime_theft %>%
 
 rm(crime_data, crime_theft)
 
-
-
-
 # Now we left join the crime_ag data to the lnd@data
 lnd@data <- left_join(lnd@data, crime_ag, 
                       by = c('name' = 'Borough'))
 
-
 # Basic plot with new data
-qtm(shp = lnd, fill = "CrimeCount") # plot the basic map
-
-
-
+qtm(shp = lnd, fill = "CrimeCount") 
+qtm(shp = lnd, fill = "CrimeCount", fill.palette = "Blues")
 
 
 
 
 # Clipping and spatial joins ----------------------------------------------
-
-
-
 
 # create new stations object using the "lnd-stns" shapefile.
 stations <- readOGR(dsn = "data/lnd-stns.shp")
@@ -147,10 +130,7 @@ plot(stations) # test the clip succeeded
 
 # tmap --------------------------------------------------------------------
 
-
-
 vignette("tmap-nutshell")
-
 
 
 qtm(shp = lnd, fill = "Partic_Per", fill.palette = "-Blues") # not shown
